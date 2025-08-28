@@ -1,231 +1,512 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jadwal Pelajaran</title>
-   <link rel="manifest" href="manifest.webmanifest">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>All‑in‑One Converter – Mobile</title>
+  <link rel="manifest" href="manifest.webmanifest">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f9; color: #333; transition: background 0.3s, color 0.3s; }
-    .dark { background: #1e1e1e; color: #f4f4f9; }
-    .container { max-width: 600px; margin: auto; }
-    select, input, button, textarea { padding: 8px; margin: 5px 0; border-radius: 6px; border: 1px solid #ccc; background: inherit; color: inherit; }
-    button { cursor: pointer; }
-    .btn { margin: 2px; padding: 6px 12px; border: none; border-radius: 6px; }
-    .btn-green { background: #28a745; color: #fff; }
-    .btn-blue { background: #007bff; color: #fff; }
-    .btn-red { background: #dc3545; color: #fff; }
-    .btn-yellow { background: #ffc107; color: #000; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #eee; }
-    .dark th { background: #333; }
-    .dark td, .dark th { border-color: #555; }
-    textarea { width: 100%; min-height: 80px; margin-top: 10px; resize: vertical; box-sizing: border-box; }
-    tr.dragging { opacity: 0.5; }
-  </style>
-</head>
-<footer id="donateFooter">
-  <span>Gratis untuk semua</span>
-  <a href="https://saweria.co/valitio" target="_blank" rel="noopener noreferrer">
-    💝 Dukung via Saweria
-  </a>
-</footer>
-
-<style>
-  #donateFooter {
-    position: fixed;
-    bottom: 0; left: 0;
-    width: 100%;
-    background: var(--card);
-    border-top: 1px solid var(--border);
-    color: var(--text);
-    font-size: 0.9rem;
-    text-align: center;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    z-index: 999;
+  :root{
+    --bg:#0f1220; --card:#161a2b; --muted:#2a3050; --text:#e8ebff; --sub:#aab1d6;
+    --accent:#7c5cff; --accent2:#29d3c0; --danger:#ff6b6b;
+    --radius:20px; --pad:14px; --shadow:0 20px 40px rgba(0,0,0,.35);
   }
-  #donateFooter a {
-    color: #f97316;
-    font-weight: 600;
-    text-decoration: none;
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:linear-gradient(180deg,#0b0e1a 0%,#10132a 100%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  header{
+    position:sticky;top:0;z-index:10;background:rgba(15,18,32,.75);backdrop-filter:blur(10px);
+    border-bottom:1px solid #20264a; box-shadow:0 10px 30px rgba(0,0,0,.25)
   }
-  #donateFooter a:hover {
-    text-decoration: underline;
-  }
+  .wrap{max-width:1100px;margin:0 auto;padding:14px}
+  .title{display:flex;gap:12px;align-items:center}
+  .badge{font-size:12px;color:#0b1020;background:linear-gradient(90deg,var(--accent),var(--accent2));padding:4px 10px;border-radius:999px;font-weight:700}
+  .title h1{font-size:20px;margin:0}
+  .sub{color:var(--sub);font-size:12px;margin-top:4px}
+  .grid{display:grid;gap:14px;margin:16px auto}
+  @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card);border:1px solid #20264a;border-radius:var(--radius);box-shadow:var(--shadow)}
+  .card header{position:relative;background:linear-gradient(90deg,rgba(124,92,255,.12),rgba(41,211,192,.12));border:0;border-radius:var(--radius) var(--radius) 0 0}
+  .card header h2{font-size:16px;margin:0;padding:12px 16px}
+  .card .content{padding:14px}
+  textarea,input[type="text"],input[type="number"],select{width:100%;background:#0e1222;color:var(--text);border:1px solid #273058;border-radius:12px;padding:10px;outline:none}
+  textarea{min-height:120px;resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row > *{flex:1}
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  button{border:0;border-radius:14px;padding:10px 12px;background:var(--muted);color:var(--text);font-weight:600}
+  button.primary{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  button.danger{background:var(--danger)}
+  .out{background:#0c1020;border:1px dashed #2b335c;border-radius:12px;padding:10px;min-height:90px;white-space:pre-wrap;overflow:auto}
+  .hint{color:#98a0cc;font-size:12px;margin:8px 0}
+  .divider{height:1px;background:#22284a;margin:10px -14px}
+  .preview{display:block;max-width:100%;border-radius:12px;border:1px solid #273058;background:#0e1222}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:#0e1222;border:1px solid #273058;border-radius:999px;padding:6px 10px;font-size:12px}
+  .footer{color:#7f86b6;font-size:12px;text-align:center;padding:30px 0}
+  .pill{padding:6px 10px;border-radius:999px;border:1px solid #2a3050;background:#11152a}
+  .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;background:#0b0f1e;border:1px solid #273058;border-radius:6px;padding:2px 6px}
 </style>
-
+</head>
 <body>
-<div class="container">
-  <h2>Jadwal</h2>
-  <div>
-    <label>Pilih Hari:</label>
-    <select id="daySelect"></select>
-    <button class="btn btn-green" onclick="addDay()">+ Hari</button>
-    <button class="btn btn-red" onclick="removeDay()">- Hari</button>
-  </div>
-  <div>
-    <input type="text" id="subjectInput" placeholder="Tambah mata pelajaran...">
-    <button class="btn btn-green" onclick="addSubject()">+ Tambah</button>
-  </div>
-  <div>
-    <button class="btn btn-blue" onclick="saveData()">Simpan</button>
-    <button class="btn btn-green" onclick="importData()">Import</button>
-    <button class="btn btn-green" onclick="backupData()">Backup</button>
-    <button class="btn btn-yellow" onclick="toggleDarkMode()">🌙/☀️</button>
-  </div>
+  <header>
+    <div class="wrap">
+      <div class="title">
+        <span class="badge">AIO Converter</span>
+        <h1>All‑in‑One Converter (HTML/CSS/JS)</h1>
+      </div>
+      <div class="sub">Mobile‑first • 100% offline • Modern UI • Dua Arah • Cocok dibuka di browser HP atau dibungkus WebView</div>
+    </div>
+  </header>
 
-  <table id="scheduleTable">
-    <thead>
-      <tr><th>No</th><th>Mata Pelajaran</th><th>Aksi</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <main class="wrap">
+    <div class="chips" style="margin-top:10px">
+      <span class="chip">Text ⇆ Base64</span>
+      <span class="chip">CSV ⇆ JSON</span>
+      <span class="chip">Markdown ⇆ HTML</span>
+      <span class="chip">Gambar ⇆ Base64</span>
+      <span class="chip">PNG/JPG/WEBP + Resize</span>
+      <span class="chip">Audio ⇆ Base64</span>
+      <span class="chip">Text ➜ Suara (TTS)</span>
+      <span class="chip">URL Encode ⇆ Decode</span>
+      <span class="chip">PWA Icon Generator</span>
+    </div>
 
-  <div>
-    <h3>Catatan:</h3>
-    <textarea id="notes" placeholder="Tulis catatan di sini..."></textarea>
-  </div>
-</div>
+    <section class="grid">
+      <!-- Text <-> Base64 -->
+      <article class="card" id="tool-b64">
+        <header><h2>Text ⇆ Base64</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>Teks</label>
+              <textarea id="txtText" placeholder="Masukkan teks…"></textarea>
+            </div>
+            <div>
+              <label>Base64</label>
+              <textarea id="txtB64" placeholder="Masukkan base64…"></textarea>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="primary" onclick="ui.textToBase64()">Convert: Text ➜ Base64</button>
+            <button onclick="ui.base64ToText()">Convert: Base64 ➜ Text</button>
+            <button class="danger" onclick="ui.clear(['txtText','txtB64'])">Bersihkan</button>
+          </div>
+          <div class="hint">Mendukung UTF‑8 penuh. Bisa dipakai untuk teks panjang.</div>
+        </div>
+      </article>
+
+      <!-- CSV <-> JSON -->
+      <article class="card" id="tool-csvjson">
+        <header><h2>CSV ⇆ JSON</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>CSV</label>
+              <textarea id="txtCSV" placeholder="name,age\nRista,20"></textarea>
+            </div>
+            <div>
+              <label>JSON</label>
+              <textarea id="txtJSON" placeholder='[{"name":"Rista","age":20}]'></textarea>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="primary" onclick="ui.csvToJson()">CSV ➜ JSON</button>
+            <button onclick="ui.jsonToCsv()">JSON ➜ CSV</button>
+            <button onclick="ui.downloadText('data.json', document.getElementById('txtJSON').value)">Unduh JSON</button>
+            <button onclick="ui.downloadText('data.csv', document.getElementById('txtCSV').value)">Unduh CSV</button>
+            <button class="danger" onclick="ui.clear(['txtCSV','txtJSON'])">Bersihkan</button>
+          </div>
+          <div class="hint">Parser CSV mendukung tanda kutip ganda & koma di dalam kolom.</div>
+        </div>
+      </article>
+
+      <!-- Markdown <-> HTML -->
+      <article class="card" id="tool-md">
+        <header><h2>Markdown ⇆ HTML (offline, simpel)</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>Markdown</label>
+              <textarea id="txtMD" placeholder="# Judul\n**tebal** *miring* `kode`\n- item 1\n- item 2"></textarea>
+            </div>
+            <div>
+              <label>HTML</label>
+              <textarea id="txtHTML" placeholder="&lt;h1&gt;Judul&lt;/h1&gt;"></textarea>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="primary" onclick="ui.mdToHtml()">Markdown ➜ HTML</button>
+            <button onclick="ui.htmlToMd()">HTML ➜ Markdown</button>
+            <button onclick="ui.downloadText('content.html', document.getElementById('txtHTML').value)">Unduh HTML</button>
+            <button class="danger" onclick="ui.clear(['txtMD','txtHTML'])">Bersihkan</button>
+          </div>
+          <div class="hint">Konverter ringan (rule dasar: heading, bold, italic, code, link, list, paragraf).</div>
+        </div>
+      </article>
+
+      <!-- Image <-> Base64 & Format/Resize -->
+      <article class="card" id="tool-img">
+        <header><h2>Gambar ⇆ Base64 + Format & Resize</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>Pilih Gambar</label>
+              <input type="file" accept="image/*" id="imgInput" />
+              <div class="row" style="margin-top:8px">
+                <div>
+                  <label>Lebar (px)</label>
+                  <input type="number" id="imgW" placeholder="otomatis" />
+                </div>
+                <div>
+                  <label>Tinggi (px)</label>
+                  <input type="number" id="imgH" placeholder="otomatis" />
+                </div>
+                <div>
+                  <label>Format</label>
+                  <select id="imgFmt">
+                    <option value="image/png">PNG</option>
+                    <option value="image/jpeg">JPG</option>
+                    <option value="image/webp">WEBP</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Kualitas (0–1, JPG/WEBP)</label>
+                  <input type="number" id="imgQ" step="0.05" min="0" max="1" placeholder="0.92" />
+                </div>
+              </div>
+              <div class="btns">
+                <button class="primary" onclick="ui.processImage()">Proses ➜ Preview & Unduh</button>
+                <button onclick="ui.imageToBase64()">Gambar ➜ Base64</button>
+                <button onclick="ui.base64ToImage()">Base64 ➜ Gambar</button>
+                <button class="danger" onclick="ui.clear(['imgB64','imgPreview'])">Bersihkan</button>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <label>Preview</label>
+          <img id="imgPreview" class="preview" alt="preview" />
+          <div class="btns" id="imgDownloads"></div>
+          <label>Base64</label>
+          <textarea id="imgB64" placeholder="hasil base64 gambar…"></textarea>
+          <div class="hint">Jika hanya isi lebar/tinggi salah satu, aspek rasio akan dipertahankan.</div>
+        </div>
+      </article>
+
+      <!-- Audio <-> Base64 -->
+      <article class="card" id="tool-audio">
+        <header><h2>Audio ⇆ Base64</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>Pilih File Audio (mp3/wav/ogg)</label>
+              <input type="file" accept="audio/*" id="audInput" />
+              <div class="btns">
+                <button class="primary" onclick="ui.audioToBase64()">Audio ➜ Base64</button>
+                <button onclick="ui.base64ToAudio()">Base64 ➜ Audio</button>
+                <button class="danger" onclick="ui.clear(['audB64'])">Bersihkan</button>
+              </div>
+            </div>
+          </div>
+          <audio id="audPreview" controls style="width:100%;margin-top:10px"></audio>
+          <label>Base64</label>
+          <textarea id="audB64" placeholder="hasil base64 audio…"></textarea>
+        </div>
+      </article>
+
+      <!-- Text -> Speech (TTS) -->
+      <article class="card" id="tool-tts">
+        <header><h2>Text ➜ Suara (TTS)</h2></header>
+        <div class="content">
+          <label>Teks</label>
+          <textarea id="ttsText" placeholder="Ketik teks yang ingin dibacakan…"></textarea>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Bahasa/Suara</label>
+              <select id="ttsVoices"></select>
+            </div>
+            <div>
+              <label>Kecepatan (rate)</label>
+              <input type="number" id="ttsRate" min="0.5" max="2" step="0.1" value="1" />
+            </div>
+            <div>
+              <label>Pitch</label>
+              <input type="number" id="ttsPitch" min="0" max="2" step="0.1" value="1" />
+            </div>
+          </div>
+          <div class="btns">
+            <button class="primary" onclick="ui.ttsSpeak()">Putar</button>
+            <button class="danger" onclick="ui.ttsStop()">Hentikan</button>
+          </div>
+          <div class="hint">Catatan: Browser mobile umumnya **tidak mengizinkan** menyimpan audio TTS sebagai file langsung. Fitur ini untuk playback saja.</div>
+        </div>
+      </article>
+
+      <!-- URL Encode/Decode -->
+      <article class="card" id="tool-url">
+        <header><h2>URL Encode ⇆ Decode</h2></header>
+        <div class="content">
+          <div class="row">
+            <div>
+              <label>Input</label>
+              <textarea id="urlIn" placeholder="https://contoh.com/?q=halo dunia"></textarea>
+            </div>
+            <div>
+              <label>Output</label>
+              <textarea id="urlOut" placeholder=""></textarea>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="primary" onclick="ui.urlEncode()">Encode</button>
+            <button onclick="ui.urlDecode()">Decode</button>
+            <button class="danger" onclick="ui.clear(['urlIn','urlOut'])">Bersihkan</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- PWA Icon Generator -->
+      <article class="card" id="tool-pwa">
+        <header><h2>PWA Icon Generator (PNG, multi‑ukuran)</h2></header>
+        <div class="content">
+          <label>Sumber Gambar (disarankan 1024×1024 PNG/JPG)</label>
+          <input type="file" accept="image/*" id="pwaInput" />
+          <div class="btns">
+            <button class="primary" onclick="ui.generatePwaIcons()">Generate Semua Ikon</button>
+            <button class="danger" onclick="ui.clearPwa()">Bersihkan</button>
+          </div>
+          <div class="hint">Akan dibuat ikon: 512, 384, 256, 192, 180, 152, 144, 128, 96, 72 px (PNG). Juga menampilkan snippet manifest.json yang cocok.</div>
+          <div id="pwaIcons" class="grid" style="margin-top:10px"></div>
+          <label>manifest.json (contoh)</label>
+          <textarea id="manifestOut" spellcheck="false"></textarea>
+        </div>
+      </article>
+
+    </section>
+
+    <div class="footer">Made with ❤️ in pure HTML/CSS/JS. Simpan halaman ini sebagai file <span class="kbd">.html</span> lalu buka di browser HP.
+    </div>
+  </main>
 
 <script>
-  let data = JSON.parse(localStorage.getItem('jadwalData')) || { days: { 'Senin': [], }, notes: {} };
-  const daySelect = document.getElementById('daySelect');
-  const subjectInput = document.getElementById('subjectInput');
-  const scheduleTable = document.getElementById('scheduleTable').querySelector('tbody');
-  const notes = document.getElementById('notes');
-  let dragSrcEl = null;
+// ===== Helper umum =====
+const ui = {
+  clear(ids){ ids.forEach(id => document.getElementById(id).value = ""); },
+  downloadText(filename, text){
+    const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  },
+  dataURLtoBlob(dataURL){
+    const [meta, base64] = dataURL.split(',');
+    const mime = /data:(.*?);/.exec(meta)[1];
+    const bin = atob(base64);
+    const len = bin.length; const u8 = new Uint8Array(len);
+    for(let i=0;i<len;i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], {type:mime});
+  },
+  // ---- Text/Base64 UTF-8 safe ----
+  _toB64(str){ const u8 = new TextEncoder().encode(str); let bin=''; u8.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin); },
+  _fromB64(b64){ const bin = atob(b64.trim()); const u8 = new Uint8Array([...bin].map(ch=>ch.charCodeAt(0))); return new TextDecoder().decode(u8); },
+  textToBase64(){ const v = document.getElementById('txtText').value; document.getElementById('txtB64').value = ui._toB64(v); },
+  base64ToText(){ const v = document.getElementById('txtB64').value; try{ document.getElementById('txtText').value = ui._fromB64(v);}catch(e){ alert('Base64 tidak valid'); } },
 
-  function renderDays(){
-    daySelect.innerHTML = '';
-    for (let d in data.days){
-      let opt = document.createElement('option');
-      opt.value = d; opt.textContent = d;
-      daySelect.appendChild(opt);
+  // ---- CSV <-> JSON (dengan dukungan kutip) ----
+  parseCSV(text){
+    const rows=[]; let cur=''; let row=[]; let quote=false; for(let i=0;i<text.length;i++){
+      const c=text[i];
+      if(c==='"'){
+        if(quote && text[i+1]==='"'){ cur+='"'; i++; }
+        else quote=!quote;
+      } else if(c===',' && !quote){ row.push(cur); cur=''; }
+      else if((c==='\n' || c==='\r') && !quote){ if(cur!==''||row.length){ row.push(cur); rows.push(row); row=[]; cur=''; } }
+      else { cur+=c; }
     }
-    renderSchedule();
-  }
+    if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+    return rows;
+  },
+  csvToJson(){
+    const csv = document.getElementById('txtCSV').value.trim(); if(!csv){return}
+    const rows = ui.parseCSV(csv);
+    if(rows.length===0){ document.getElementById('txtJSON').value='[]'; return; }
+    const headers = rows[0];
+    const data = rows.slice(1).filter(r=>r.length && r.some(c=>c!==''))
+      .map(r=>Object.fromEntries(headers.map((h,i)=>[h.trim(), (r[i]??'').trim()])));
+    document.getElementById('txtJSON').value = JSON.stringify(data, null, 2);
+  },
+  jsonToCsv(){
+    try{
+      const arr = JSON.parse(document.getElementById('txtJSON').value || '[]');
+      if(!Array.isArray(arr) || arr.length===0){ document.getElementById('txtCSV').value=''; return; }
+      const headers = Array.from(arr.reduce((s,o)=>{ Object.keys(o).forEach(k=>s.add(k)); return s; }, new Set()));
+      const esc = v => {
+        v = (v===undefined||v===null)?'':String(v);
+        return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+      };
+      const csv = [headers.join(',')].concat(arr.map(o=>headers.map(h=>esc(o[h])).join(','))).join('\n');
+      document.getElementById('txtCSV').value = csv;
+    }catch(e){ alert('JSON tidak valid'); }
+  },
 
-  function addDay(){
-    let name = prompt('Nama hari:');
-    if(name && !data.days[name]){ data.days[name] = []; renderDays(); saveData(); }
-  }
-
-  function removeDay(){
-    let d = daySelect.value;
-    if(confirm('Hapus hari ' + d + '?')){
-      delete data.days[d];
-      delete data.notes[d];
-      renderDays(); saveData();
+  // ---- Markdown <-> HTML (ringan) ----
+  mdToHtml(){
+    let md = document.getElementById('txtMD').value; if(!md){return}
+    // basic escape
+    md = md.replace(/\r/g,'');
+    const lines = md.split('\n');
+    const out=[]; let inList=false; let ol=false; let idx=1;
+    const flushList=()=>{ if(inList){ out.push(ol?'</ol>':'</ul>'); inList=false; ol=false; idx=1; } };
+    for(let line of lines){
+      if(/^######\s+/.test(line)) out.push('<h6>'+line.replace(/^######\s+/,'')+'</h6>');
+      else if(/^#####\s+/.test(line)) out.push('<h5>'+line.replace(/^#####\s+/,'')+'</h5>');
+      else if(/^####\s+/.test(line)) out.push('<h4>'+line.replace(/^####\s+/,'')+'</h4>');
+      else if(/^###\s+/.test(line)) out.push('<h3>'+line.replace(/^###\s+/,'')+'</h3>');
+      else if(/^##\s+/.test(line)) out.push('<h2>'+line.replace(/^##\s+/,'')+'</h2>');
+      else if(/^#\s+/.test(line)) out.push('<h1>'+line.replace(/^#\s+/,'')+'</h1>');
+      else if(/^\d+\.\s+/.test(line)){ if(!inList||!ol){ flushList(); out.push('<ol>'); inList=true; ol=true; } out.push('<li>'+line.replace(/^\d+\.\s+/,'')+'</li>'); }
+      else if(/^[-*+]\s+/.test(line)){ if(!inList||ol){ flushList(); out.push('<ul>'); inList=true; ol=false; } out.push('<li>'+line.replace(/^[-*+]\s+/,'')+'</li>'); }
+      else if(line.trim()===''){ flushList(); out.push(''); }
+      else { flushList(); out.push('<p>'+line+'</p>'); }
     }
-  }
-
-  function addSubject(){
-    let d = daySelect.value;
-    let subj = subjectInput.value.trim();
-    if(subj){
-      data.days[d].push(subj);
-      subjectInput.value = '';
-      renderSchedule(); saveData();
-    }
-  }
-
-  function removeSubject(index){
-    let d = daySelect.value;
-    data.days[d].splice(index,1);
-    renderSchedule(); saveData();
-  }
-
-  function editSubject(index){
-    let d = daySelect.value;
-    let cell = document.getElementById('subj-'+index);
-    cell.contentEditable = true;
-    cell.focus();
-    cell.onblur = function(){
-      data.days[d][index] = cell.textContent.trim();
-      cell.contentEditable = false;
-      saveData();
+    let html = out.join('\n');
+    html = html
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g,'<em>$1</em>')
+      .replace(/`([^`]+)`/g,'<code>$1</code>')
+      .replace(/\[(.*?)\]\((.*?)\)/g,'<a href="$2" target="_blank">$1<\/a>');
+    document.getElementById('txtHTML').value = html;
+  },
+  htmlToMd(){
+    const html = document.createElement('div');
+    html.innerHTML = document.getElementById('txtHTML').value;
+    const walk = (node)=>{
+      if(node.nodeType===3) return node.nodeValue;
+      if(node.nodeType!==1) return '';
+      const tag=node.tagName.toLowerCase();
+      let md='';
+      const children=[...node.childNodes].map(walk).join('');
+      switch(tag){
+        case 'h1': md += '# '+children+'\n'; break;
+        case 'h2': md += '## '+children+'\n'; break;
+        case 'h3': md += '### '+children+'\n'; break;
+        case 'h4': md += '#### '+children+'\n'; break;
+        case 'h5': md += '##### '+children+'\n'; break;
+        case 'h6': md += '###### '+children+'\n'; break;
+        case 'strong': md += '**'+children+'**'; break;
+        case 'em': md += '*'+children+'*'; break;
+        case 'code': md += '`'+children+'`'; break;
+        case 'a': md += '['+(children||node.textContent)+']('+(node.getAttribute('href')||'')+')'; break;
+        case 'ul': md += [...node.children].map(li=>'- '+walk(li)).join('\n')+'\n'; break;
+        case 'ol': md += [...node.children].map((li,i)=> (i+1)+'. '+walk(li)).join('\n')+'\n'; break;
+        case 'li': md += children; break;
+        case 'p': md += children+'\n'; break;
+        case 'br': md += '\n'; break;
+        default: md += children; break;
+      }
+      return md;
     };
-  }
+    document.getElementById('txtMD').value = walk(html).trim();
+  },
 
-  function renderSchedule(){
-    let d = daySelect.value;
-    scheduleTable.innerHTML = '';
-    data.days[d].forEach((subj,i)=>{
-      let tr = document.createElement('tr');
-      tr.setAttribute('draggable','true');
-      tr.innerHTML = `<td>${i+1}</td>
-                      <td id="subj-${i}">${subj}</td>
-                      <td>
-                        <button class='btn btn-blue' onclick='editSubject(${i})'>✏️</button>
-                        <button class='btn btn-red' onclick='removeSubject(${i})'>🗑️</button>
-                      </td>`;
-      addDnDHandlers(tr, i);
-      scheduleTable.appendChild(tr);
-    });
-    notes.value = data.notes[d] || '';
-  }
+  // ---- Image tools ----
+  _loadImageFromFile(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>{ const img=new Image(); img.onload=()=>res({img,src:fr.result}); img.onerror=rej; img.src=fr.result; }; fr.onerror=rej; fr.readAsDataURL(file); }); },
+  _loadImageFromB64(b64){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=b64.trim(); }); },
+  processImage(){
+    const f = document.getElementById('imgInput').files[0]; if(!f){ alert('Pilih gambar dulu'); return; }
+    ui._loadImageFromFile(f).then(({img,src})=>{
+      const W = parseInt(document.getElementById('imgW').value||0); const H = parseInt(document.getElementById('imgH').value||0);
+      let w = W|| (H? Math.round(img.width * (H/img.height)) : img.width);
+      let h = H|| (W? Math.round(img.height * (W/img.width)) : img.height);
+      const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      const fmt=document.getElementById('imgFmt').value; const q=parseFloat(document.getElementById('imgQ').value||'0.92');
+      const dataURL = canvas.toDataURL(fmt, isNaN(q)?undefined:q);
+      document.getElementById('imgPreview').src = dataURL;
+      document.getElementById('imgB64').value = dataURL;
+      const dl = document.getElementById('imgDownloads'); dl.innerHTML='';
+      const a=document.createElement('a'); a.textContent='Unduh Gambar'; a.className='pill'; a.download = 'image.'+(fmt.includes('png')?'png':fmt.includes('jpeg')?'jpg':'webp'); a.href = dataURL; dl.appendChild(a);
+    }).catch(()=>alert('Gagal memuat gambar'));
+  },
+  imageToBase64(){
+    const f = document.getElementById('imgInput').files[0]; if(!f){ alert('Pilih gambar dulu'); return; }
+    const fr=new FileReader(); fr.onload=()=>{ document.getElementById('imgB64').value = fr.result; document.getElementById('imgPreview').src = fr.result; }; fr.readAsDataURL(f);
+  },
+  base64ToImage(){
+    const b64=document.getElementById('imgB64').value.trim(); if(!b64){return}
+    ui._loadImageFromB64(b64).then(img=>{ const canvas=document.createElement('canvas'); canvas.width=img.width; canvas.height=img.height; canvas.getContext('2d').drawImage(img,0,0); const url=canvas.toDataURL('image/png'); document.getElementById('imgPreview').src=url; const dl=document.getElementById('imgDownloads'); dl.innerHTML=''; const a=document.createElement('a'); a.textContent='Unduh PNG'; a.className='pill'; a.download='image.png'; a.href=url; dl.appendChild(a); }).catch(()=>alert('Base64 gambar tidak valid'));
+  },
 
-  function saveData(){
-    let d = daySelect.value;
-    data.notes[d] = notes.value;
-    localStorage.setItem('jadwalData', JSON.stringify(data));
-    alert('Data disimpan!');
-  }
+  // ---- Audio tools ----
+  audioToBase64(){
+    const f = document.getElementById('audInput').files[0]; if(!f){ alert('Pilih file audio dulu'); return; }
+    const fr=new FileReader(); fr.onload=()=>{ document.getElementById('audB64').value = fr.result; const aud=document.getElementById('audPreview'); aud.src = fr.result; aud.play().catch(()=>{}); }; fr.readAsDataURL(f);
+  },
+  base64ToAudio(){
+    const b64=document.getElementById('audB64').value.trim(); if(!b64){return}
+    try{ const aud=document.getElementById('audPreview'); aud.src=b64; aud.play().catch(()=>{}); }catch(e){ alert('Base64 audio tidak valid'); }
+  },
 
-  function backupData(){
-    let blob = new Blob([JSON.stringify(data)], {type:'application/json'});
-    let a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'jadwal.json';
-    a.click();
-  }
+  // ---- TTS ----
+  _voices:[],
+  loadVoices(){
+    const sel = document.getElementById('ttsVoices'); sel.innerHTML='';
+    ui._voices = speechSynthesis.getVoices().sort((a,b)=> (a.lang||'').localeCompare(b.lang||''));
+    ui._voices.forEach((v,i)=>{ const opt=document.createElement('option'); opt.value=String(i); opt.textContent = `${v.name} — ${v.lang}`; sel.appendChild(opt); });
+    if(!ui._voices.length){ const opt=document.createElement('option'); opt.textContent='(Suara belum tersedia — coba tunggu 2s atau relaunch)'; sel.appendChild(opt); }
+  },
+  ttsSpeak(){
+    const text=document.getElementById('ttsText').value.trim(); if(!text){return}
+    speechSynthesis.cancel();
+    const uttr = new SpeechSynthesisUtterance(text);
+    const sel=document.getElementById('ttsVoices'); const v=ui._voices[parseInt(sel.value)||0]; if(v) uttr.voice=v;
+    uttr.rate=parseFloat(document.getElementById('ttsRate').value||'1');
+    uttr.pitch=parseFloat(document.getElementById('ttsPitch').value||'1');
+    speechSynthesis.speak(uttr);
+  },
+  ttsStop(){ speechSynthesis.cancel(); },
 
-  function importData(){
-    let inp = document.createElement('input');
-    inp.type = 'file';
-    inp.accept = 'application/json';
-    inp.onchange = e=>{
-      let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.onload = ()=>{ data = JSON.parse(reader.result); renderDays(); saveData(); };
-      reader.readAsText(file);
+  // ---- URL encode/decode ----
+  urlEncode(){ document.getElementById('urlOut').value = encodeURIComponent(document.getElementById('urlIn').value); },
+  urlDecode(){ try{ document.getElementById('urlOut').value = decodeURIComponent(document.getElementById('urlIn').value); }catch(e){ alert('String tidak valid untuk decode'); } },
+
+  // ---- PWA icon generator ----
+  clearPwa(){ document.getElementById('pwaIcons').innerHTML=''; document.getElementById('manifestOut').value=''; document.getElementById('pwaInput').value=''; },
+  async generatePwaIcons(){
+    const f = document.getElementById('pwaInput').files[0]; if(!f){ alert('Pilih gambar sumber dulu'); return; }
+    const {img} = await ui._loadImageFromFile(f);
+    const sizes = [512,384,256,192,180,152,144,128,96,72];
+    const icons=[]; const cont=document.getElementById('pwaIcons'); cont.innerHTML='';
+    for(const s of sizes){
+      const canvas=document.createElement('canvas'); canvas.width=s; canvas.height=s; const ctx=canvas.getContext('2d');
+      // background transparent, fit cover
+      const ratio=Math.min(img.width/img.height, img.height/img.width); // not used but keep
+      // contain with cover centered
+      const scale=Math.max(s/img.width, s/img.height); const w=Math.round(img.width*scale); const h=Math.round(img.height*scale);
+      const dx=Math.round((s - w)/2), dy=Math.round((s - h)/2);
+      ctx.imageSmoothingQuality='high'; ctx.clearRect(0,0,s,s); ctx.drawImage(img,dx,dy,w,h);
+      const url = canvas.toDataURL('image/png');
+      icons.push({src:`icons/icon-${s}.png`, sizes:`${s}x${s}`, type:'image/png', url});
+      const card=document.createElement('div'); card.className='card'; card.innerHTML=`<header><h2>${s}×${s}</h2></header><div class="content"><img class="preview" src="${url}" alt="icon ${s}"/><div class='btns'><a class='pill' download='icon-${s}.png' href='${url}'>Unduh PNG</a></div></div>`;
+      cont.appendChild(card);
+    }
+    const manifest = {
+      name: "Aplikasi PWA Anda",
+      short_name: "App",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#10132a",
+      theme_color: "#7c5cff",
+      icons: icons.map(({src,sizes,type})=>({src,sizes,type}))
     };
-    inp.click();
+    document.getElementById('manifestOut').value = JSON.stringify(manifest, null, 2);
   }
+};
 
-  function toggleDarkMode(){
-    document.body.classList.toggle('dark');
-  }
-
-  function addDnDHandlers(row, index){
-    row.addEventListener('dragstart', (e)=>{
-      dragSrcEl = index;
-      row.classList.add('dragging');
-    });
-    row.addEventListener('dragend', ()=>{
-      row.classList.remove('dragging');
-    });
-    row.addEventListener('dragover', (e)=>{
-      e.preventDefault();
-    });
-    row.addEventListener('drop', (e)=>{
-      let d = daySelect.value;
-      let rows = Array.from(scheduleTable.querySelectorAll('tr'));
-      let dropIndex = rows.indexOf(row);
-      let moved = data.days[d].splice(dragSrcEl,1)[0];
-      data.days[d].splice(dropIndex,0,moved);
-      renderSchedule(); saveData();
-    });
-  }
-
-  daySelect.onchange = renderSchedule;
-  renderDays();
-      // Register Service Worker
-    if ("serviceWorker" in navigator) {
+// Init TTS voices (beberapa browser butuh event onvoiceschanged)
+if ('speechSynthesis' in window){
+  ui.loadVoices();
+  window.speechSynthesis.onvoiceschanged = ui.loadVoices;
+}
+      if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
         .then(() => console.log("Service Worker registered"))
         .catch(err => console.error("SW registration failed:", err));
